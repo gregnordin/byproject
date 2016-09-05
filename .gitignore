@@ -1,0 +1,15 @@
+*.pyc
+.ipynb_checkpoints
+*.mp4
+*.dsp
+*.sln
+*.vcproj
+*.sfp
+*.inc
+*.stl
+*.aux
+*.log
+*.gz
+*.mov
+*.bbl
+*.blg
