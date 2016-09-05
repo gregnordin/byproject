@@ -214,3 +214,7 @@ More ideas
     - notdone.txt - items that made it on the todo list but then were dropped off
 - Only show todo's with priorities
 - Have a secondary list?
+
+### Final status today
+
+I need to change `get_start_and_end_dates_indices(lines, startdate, enddate)` to handle corner cases

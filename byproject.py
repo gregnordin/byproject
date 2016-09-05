@@ -3,7 +3,7 @@
 # http://stackoverflow.com/questions/2429511/why-do-people-write-usr-bin-env-python-on-the-first-line-of-a-python-script?rq=1
 
 from colorama import init, deinit, Fore, Back, Style
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import argparse
 import re
 import collections
@@ -42,20 +42,34 @@ def get_start_and_end_dates_indices(lines, startdate, enddate):
             index_end_date = -1
     return index_start_date, index_end_date
 
-def get_month(s):
+def validate_date(date_text):
+    try:
+        return datetime.strptime(date_text, '%Y-%m-%d').date()
+    except ValueError:
+        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+
+def validate_month(date_text):
+    try:
+        return datetime.strptime(date_text, '%Y-%m').date()
+    except ValueError:
+        raise ValueError("Incorrect data format, should be YYYY-MM")
+
+def last_day_of_month(any_day):
+    next_month = any_day.replace(day=28) + timedelta(days=4)  # this will never fail
+    return next_month - timedelta(days=next_month.day)
+
+def get_month_start_end(s):
     """
     Return first and last days as datetime.date objects
     in the month contained in input string 's' having
     the format (YYYY-MM).
     """
-    # Check that string has the right format
-
-    # Get first day of the month (easy!)
-
+    # Check that string has the right format & get first day of month
+    month_first_day = validate_month(s)
     # Get last day of the month
+    month_last_day = last_day_of_month(month_first_day)
+    return month_first_day, month_last_day
 
-    # Return first and last days
-    
 # Define shortcuts for colored text printed to terminal
 red = Fore.RED + '{0}' + Style.RESET_ALL
 blue = Fore.BLUE + '{0}' + Style.RESET_ALL
@@ -96,7 +110,7 @@ print("-m value:", args.month)
 # Determine which input file to use
 if args.file != None:
     fname = args.file
-elif args.day >= 0:
+elif args.day >= 0 or args.month != None:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"done.txt")
 else:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
@@ -104,14 +118,18 @@ print('filename:', fname)
 
 # Open file and read contents
 with open(fname, 'r') as f:
-    contents = f.read()
+    alllines = f.readlines()
+
+print("fname:", fname)
 
 # Find startline according to date
 if args.all or os.path.basename(fname) == "todo.txt":
     startline = 0
     lastline = -1
 elif args.month != None:
-    getdate(args.month)
+    startdate, enddate = get_month_start_end(args.month)
+    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    print('-m', args.month, startdate, enddate, startline, lastline)
 else:
     # Get current date and starting date
     today = datetime.now().date()
@@ -126,7 +144,7 @@ else:
 
 print("start line and last line:", startline, lastline)
 # Get lines within range of dates
-lines = contents[startline:lastline].splitlines()
+lines = alllines[startline:lastline]
 #print(lines)
 
 # Collect items by project
