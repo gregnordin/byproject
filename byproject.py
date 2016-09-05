@@ -35,42 +35,54 @@ print('')
 
 # Set up argument parser
 parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--done",
+parser.add_argument("-f", "--file",
+                    type=str,
+                    #type=argparse.FileType('r'),
+                    help = "specify input file")
+group = parser.add_mutually_exclusive_group()
+group.add_argument("-d", "--day",
                     type = int,
                     default = -1,
-                    help = "use done.txt rather than todo.txt")
+                    help = "number of days prior to today")
+group.add_argument("-a", "--all",
+                    action="store_true",
+                    help = "process all days in file")
 args = parser.parse_args()
-print(args.done)
+print("-f value:", args.file)
+print("-d value:", args.day)
+print("-a value:", args.all)
 
 # Determine which input file to use
-if args.done >= 0:
-    inputfile = "done.txt"
+if args.file != None:
+    fname = args.file
+elif args.day >= 0:
+    fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"done.txt")
 else:
-    inputfile = "todo.txt"
-fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',inputfile)
-print(fname)
+    fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
+print('filename:', fname)
 
 # Open file and read contents
-f = open(fname, 'r')
-contents = f.read()
+with open(fname, 'r') as f:
+    contents = f.read()
 
 # Find startline according to date
-if inputfile == "done.txt":
+if args.all or os.path.basename(fname) == "todo.txt":
+    startline = 0
+    lastline = -1
+else:
     # Get current date and starting date
     today = datetime.now().date()
-    startdate = today - timedelta(days=args.done)
+    startdate = today - timedelta(days=args.day)
     startdate_string = startdate.strftime("%Y-%m-%d")
     print('Date range:', startdate, 'to', today)
     startline = contents.find(startdate_string) - 2
+    lastline = -1
     #print(startline)
     #subset = contents[startline-2:]
     #lines = subset.splitlines()
-else:
-    startline = 0
-    #lines = contents.splitlines()
 
 # Get lines within range of dates
-lines = contents[startline:-1].splitlines()
+lines = contents[startline:lastline].splitlines()
 #print(lines)
 
 # Collect items by project
