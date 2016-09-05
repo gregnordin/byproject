@@ -19,6 +19,43 @@ def getdate(s):
     date = datetime.strptime(match.group(), '%Y-%m-%d').date()
     return date.strftime("%Y-%m-%d"), date
 
+def get_start_and_end_dates_indices(lines, startdate, enddate):
+    """
+    Return the index of the first occurrence of startdate and last
+    occurrence of enddate in the array of strings, lines.
+
+    Arguments:
+        lines - array of strings. Somewhere in each string is a date
+                with format YYYY-MM-DD
+        startdate, enddate - datetime object for DATES (not date and time)
+    """
+    index_start_date = 0
+    index_end_date = 0
+    continue_search_start_date = True
+    for index, line in enumerate(lines):
+        temp_date = getdate(line)
+        if temp_date == startdate and index_start_date == 0:
+            index_start_date = index
+        elif temp_date == enddate + timedelta(days=1) and index_end_date == 0:
+            index_end_date = index
+        elif index == len(lines)-1 and index_end_date == 0:
+            index_end_date = -1
+    return index_start_date, index_end_date
+
+def get_month(s):
+    """
+    Return first and last days as datetime.date objects
+    in the month contained in input string 's' having
+    the format (YYYY-MM).
+    """
+    # Check that string has the right format
+
+    # Get first day of the month (easy!)
+
+    # Get last day of the month
+
+    # Return first and last days
+    
 # Define shortcuts for colored text printed to terminal
 red = Fore.RED + '{0}' + Style.RESET_ALL
 blue = Fore.BLUE + '{0}' + Style.RESET_ALL
@@ -47,10 +84,14 @@ group.add_argument("-d", "--day",
 group.add_argument("-a", "--all",
                     action="store_true",
                     help = "process all days in file")
+group.add_argument("-m", "--month",
+                    type = str,
+                    help = "number of days prior to today")
 args = parser.parse_args()
 print("-f value:", args.file)
 print("-d value:", args.day)
 print("-a value:", args.all)
+print("-m value:", args.month)
 
 # Determine which input file to use
 if args.file != None:
@@ -69,6 +110,8 @@ with open(fname, 'r') as f:
 if args.all or os.path.basename(fname) == "todo.txt":
     startline = 0
     lastline = -1
+elif args.month != None:
+    getdate(args.month)
 else:
     # Get current date and starting date
     today = datetime.now().date()
@@ -81,6 +124,7 @@ else:
     #subset = contents[startline-2:]
     #lines = subset.splitlines()
 
+print("start line and last line:", startline, lastline)
 # Get lines within range of dates
 lines = contents[startline:lastline].splitlines()
 #print(lines)

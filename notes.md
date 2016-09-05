@@ -183,7 +183,7 @@ Here is an alternate way of doing things:
     # all days in a specified month in done.txt
     ./byproject.py -m 2016-08
     # all days in a week starting at specified date in done.txt
-    ./byproject.py -2 2016-08-21
+    ./byproject.py -w 2016-08-21
     # all days in a specified date range in done.txt
     ./byproject.py -r 2016-08-07 2016-08-14
     # current items in todo.txt
