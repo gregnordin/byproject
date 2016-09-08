@@ -1,65 +1,58 @@
-# Saturday, 2016-08-13
+# Saturday, 2016-09-03
 
-## Objective
+Here is an alternate way of doing things:
 
-Make a `.py` file to develop a script to print todo.txt lines to the terminal in the following format:
+    #----------------------------------------------------
+    # Only one of these can be specified at a time
+    #----------------------------------------------------
+    # current items in todo.txt
+    ./byproject.py
+    # last N days in done.txt
+    ./byproject.py -d N
+    # all days in done.txt
+    ./byproject.py -a
+    # all days in a specified month in done.txt
+    ./byproject.py -m 2016-08
+    # all days in a week starting at specified date in done.txt
+    ./byproject.py -w 2016-08-21
+    # all days in a specified date range in done.txt
+    ./byproject.py -r 2016-08-07 2016-08-14
+    # current items in todo.txt
+    ./byproject.py
+    #----------------------------------------------------
+    # These can be mixed with the above
+    #----------------------------------------------------
+    # Specify a different input file
+    ./byproject.py -f filename
+    # Create output in markdown format
+    ./byproject.py --markdown
+    # Include only the following projects
+    ./byproject.py -i project1 project2 ...
+    # Not include the following projects
+    ./byproject.py -n project1 project2 ...
 
-- project1
-    - item1 (earliest date)
-    - item2 (next earliest date)
-    - etc.
-- project2
-    - item1 (earliest date)
-    - item2 (next earliest date)
-    - etc.
+Other items
 
-If an item has a priority, don't change ordering, but do change its color [(Add Colour to Text in Python](http://ozzmaker.com/add-colour-to-text-in-python/), [Python colored output)](http://www.siafoo.net/snippet/88):
+- Fix problem when specified date isn't present in file go to next nearest date after specified date.
+- I also need to improve the visual formatting of the results (?)
+- Perhaps change t xp 3 to show results by week, month, date range, etc. like above, as well as having the current behavior (?)
+- Make the code a module too so can import it into other python scripts
+- Check that done.txt is sorted by completion date (descending)
 
-- \(A) = Red
-- \(B) = Blue
-- \(C) = Green
-- anything else: lime green
+More ideas
 
-Later, do the same for `done.txt` except specify optional argument specifying how many days back to include. Then be able to print from `done.txt` in the following format so I can look at what I got done on each day:
+- Heirarchy of todo files
+    - todo.txt - immediate, today
+    - soon.txt - needs done in the next days or week; review each morning
+    - someday.txt - possibly do in the future
+    - done.txt - finished items
+    - notdone.txt - items that made it on the todo list but then were dropped off
+- Only show todo's with priorities
+- Have a secondary list?
 
-- date1
-    - project1
-        - item1
-        - item2
-        - etc.
-    - project2
-        - item1
-        - item2
-        - etc.
-- date2
-    - project1
-        - item1
-        - item2
-        - etc.
-    - project2
-        - item1
-        - item2
-        - etc.
+### Final status today
 
-## Starting point
-
-Stack Overflow question: [Sorting todo.txt lines by its properties](http://stackoverflow.com/questions/30501609/sorting-todo-txt-lines-by-its-properties)
-
-## Make `.py` file executable
-
-According to Rose Perrone's answer at [Stack Overflow (Why do people write #!/usr/bin/env python on the first line of a Python script?)](http://stackoverflow.com/questions/2429511/why-do-people-write-usr-bin-env-python-on-the-first-line-of-a-python-script?rq=1) put
-
-    #!/usr/bin/env python3.5
-
-as the first line in the script. Then at the command line execute
-
-    chmod +x print_todo1.py
-
-to make the file executable so it can be run as
-
-    ./print_todo1.py
-
-from the terminal (command line).
+I need to change `get_start_and_end_dates_indices(lines, startdate, enddate)` to handle corner cases
 
 # Sunday, 2016-08-14
 
@@ -167,54 +160,65 @@ Can we assume that all of the items completed on a certain date are in a contigu
 - `./print_todo4.py -d 5` will read all items from `done.txt` from 5 days ago to the present and print them organized by project
 - `./print_todo4.py` will read all items from `todo.txt` and print them organized by project
 
-# Saturday, 2016-09-03
+# Saturday, 2016-08-13
 
-Here is an alternate way of doing things:
+## Objective
 
-    #----------------------------------------------------
-    # Only one of these can be specified at a time
-    #----------------------------------------------------
-    # current items in todo.txt
-    ./byproject.py
-    # last N days in done.txt
-    ./byproject.py -d N
-    # all days in done.txt
-    ./byproject.py -a
-    # all days in a specified month in done.txt
-    ./byproject.py -m 2016-08
-    # all days in a week starting at specified date in done.txt
-    ./byproject.py -w 2016-08-21
-    # all days in a specified date range in done.txt
-    ./byproject.py -r 2016-08-07 2016-08-14
-    # current items in todo.txt
-    ./byproject.py
-    #----------------------------------------------------
-    # These can be mixed with the above
-    #----------------------------------------------------
-    # Specify a different input file
-    ./byproject.py -f filename
-    # Create output in markdown format
-    ./byproject.py -m
+Make a `.py` file to develop a script to print todo.txt lines to the terminal in the following format:
 
-Other items
+- project1
+    - item1 (earliest date)
+    - item2 (next earliest date)
+    - etc.
+- project2
+    - item1 (earliest date)
+    - item2 (next earliest date)
+    - etc.
 
-- Fix problem when specified date isn't present in file go to next nearest date after specified date.
-- I also need to improve the visual formatting of the results (?)
-- Perhaps change t xp 3 to show results by week, month, date range, etc. like above, as well as having the current behavior (?)
-- Make the code a module too so can import it into other python scripts
-- Check that done.txt is sorted by completion date (descending)
+If an item has a priority, don't change ordering, but do change its color [(Add Colour to Text in Python](http://ozzmaker.com/add-colour-to-text-in-python/), [Python colored output)](http://www.siafoo.net/snippet/88):
 
-More ideas
+- \(A) = Red
+- \(B) = Blue
+- \(C) = Green
+- anything else: lime green
 
-- Heirarchy of todo files
-    - todo.txt - immediate, today
-    - soon.txt - needs done in the next days or week; review each morning
-    - someday.txt - possibly do in the future
-    - done.txt - finished items
-    - notdone.txt - items that made it on the todo list but then were dropped off
-- Only show todo's with priorities
-- Have a secondary list?
+Later, do the same for `done.txt` except specify optional argument specifying how many days back to include. Then be able to print from `done.txt` in the following format so I can look at what I got done on each day:
 
-### Final status today
+- date1
+    - project1
+        - item1
+        - item2
+        - etc.
+    - project2
+        - item1
+        - item2
+        - etc.
+- date2
+    - project1
+        - item1
+        - item2
+        - etc.
+    - project2
+        - item1
+        - item2
+        - etc.
 
-I need to change `get_start_and_end_dates_indices(lines, startdate, enddate)` to handle corner cases
+## Starting point
+
+Stack Overflow question: [Sorting todo.txt lines by its properties](http://stackoverflow.com/questions/30501609/sorting-todo-txt-lines-by-its-properties)
+
+## Make `.py` file executable
+
+According to Rose Perrone's answer at [Stack Overflow (Why do people write #!/usr/bin/env python on the first line of a Python script?)](http://stackoverflow.com/questions/2429511/why-do-people-write-usr-bin-env-python-on-the-first-line-of-a-python-script?rq=1) put
+
+    #!/usr/bin/env python3.5
+
+as the first line in the script. Then at the command line execute
+
+    chmod +x print_todo1.py
+
+to make the file executable so it can be run as
+
+    ./print_todo1.py
+
+from the terminal (command line).

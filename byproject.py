@@ -10,36 +10,45 @@ import collections
 import sys
 import os
 
-def getdate(s):
+def get_date_from_line(s):
     """
     Return the first date contained in input string 's'
-    as a string (YYYY-MM-DD) and as a datetime.date object.
+    as a datetime.date object.
     """
     match = re.search(r'\d{4}-\d{2}-\d{2}', s)
     date = datetime.strptime(match.group(), '%Y-%m-%d').date()
-    return date.strftime("%Y-%m-%d"), date
+    return date
+
+
 
 def get_start_and_end_dates_indices(lines, startdate, enddate):
     """
-    Return the index of the first occurrence of startdate and last
-    occurrence of enddate in the array of strings, lines.
+    Return index of the first occurrence of startdate and index of
+    the last occurrence of enddate in the array of strings, `lines`.
 
     Arguments:
         lines - array of strings. Somewhere in each string is a date
-                with format YYYY-MM-DD
-        startdate, enddate - datetime object for DATES (not date and time)
+                with format YYYY-MM-DD. Assume `lines` is sorted in
+                ASCENDING date order (i.e., oldest date first and newest
+                date last).
+        startdate, enddate - datetime object for DATES (not both date and time)
     """
-    index_start_date = 0
-    index_end_date = 0
-    continue_search_start_date = True
+    if startdate > enddate:
+        raise RuntimeError("start date is after end date")
+    index_start_date = -999
     for index, line in enumerate(lines):
-        temp_date = getdate(line)
-        if temp_date == startdate and index_start_date == 0:
-            index_start_date = index
-        elif temp_date == enddate + timedelta(days=1) and index_end_date == 0:
-            index_end_date = index
-        elif index == len(lines)-1 and index_end_date == 0:
-            index_end_date = -1
+        temp_date = get_date_from_line(line)
+        if index_start_date == -999:
+            if temp_date >= startdate:
+                index_start_date = index
+                index_end_date = index
+        else:
+            if temp_date > enddate:
+                index_end_date = index - 1
+                break
+            elif index == len(lines) - 1:
+                index_end_date = -1
+
     return index_start_date, index_end_date
 
 def validate_date(date_text):
@@ -118,7 +127,9 @@ print('filename:', fname)
 
 # Open file and read contents
 with open(fname, 'r') as f:
-    alllines = f.readlines()
+    alllines = [x.strip() for x in f.readlines()]
+#    templines = f.readlines()
+#alllines = list(map(str.strip, templines))
 
 print("fname:", fname)
 
@@ -130,7 +141,7 @@ elif args.month != None:
     startdate, enddate = get_month_start_end(args.month)
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
     print('-m', args.month, startdate, enddate, startline, lastline)
-else:
+else: #-------------- NEEDS FIXED!!!!!!!!----------------------------------------
     # Get current date and starting date
     today = datetime.now().date()
     startdate = today - timedelta(days=args.day)
