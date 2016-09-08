@@ -19,8 +19,6 @@ def get_date_from_line(s):
     date = datetime.strptime(match.group(), '%Y-%m-%d').date()
     return date
 
-
-
 def get_start_and_end_dates_indices(lines, startdate, enddate):
     """
     Return index of the first occurrence of startdate and index of
@@ -110,16 +108,20 @@ group.add_argument("-a", "--all",
 group.add_argument("-m", "--month",
                     type = str,
                     help = "number of days prior to today")
+group.add_argument("-w", "--week",
+                    type = str,
+                    help = "week starting from specified day")
 args = parser.parse_args()
 print("-f value:", args.file)
 print("-d value:", args.day)
 print("-a value:", args.all)
 print("-m value:", args.month)
+print("-w value:", args.week)
 
 # Determine which input file to use
 if args.file != None:
     fname = args.file
-elif args.day >= 0 or args.month != None:
+elif args.day >= 0 or args.month != None or args.week != None:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"done.txt")
 else:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
@@ -128,8 +130,6 @@ print('filename:', fname)
 # Open file and read contents
 with open(fname, 'r') as f:
     alllines = [x.strip() for x in f.readlines()]
-#    templines = f.readlines()
-#alllines = list(map(str.strip, templines))
 
 print("fname:", fname)
 
@@ -141,6 +141,11 @@ elif args.month != None:
     startdate, enddate = get_month_start_end(args.month)
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
     print('-m', args.month, startdate, enddate, startline, lastline)
+elif args.week != None:
+    startdate = get_date_from_line(args.week)
+    enddate = startdate + + timedelta(days=6)
+    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    print('-w', args.week, startdate, enddate, startline, lastline)
 else: #-------------- NEEDS FIXED!!!!!!!!----------------------------------------
     # Get current date and starting date
     today = datetime.now().date()
