@@ -111,17 +111,22 @@ group.add_argument("-m", "--month",
 group.add_argument("-w", "--week",
                     type = str,
                     help = "week starting from specified day")
+group.add_argument("-r", "--range",
+                    type = str,
+                    nargs = 2,
+                    help = "range of dates")
 args = parser.parse_args()
 print("-f value:", args.file)
 print("-d value:", args.day)
 print("-a value:", args.all)
 print("-m value:", args.month)
 print("-w value:", args.week)
+print("-r value:", args.range)
 
 # Determine which input file to use
 if args.file != None:
     fname = args.file
-elif args.day >= 0 or args.month != None or args.week != None:
+elif args.day >= 0 or args.month != None or args.week != None or args.range != None:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"done.txt")
 else:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
@@ -130,8 +135,6 @@ print('filename:', fname)
 # Open file and read contents
 with open(fname, 'r') as f:
     alllines = [x.strip() for x in f.readlines()]
-
-print("fname:", fname)
 
 # Find startline according to date
 if args.all or os.path.basename(fname) == "todo.txt":
@@ -146,6 +149,11 @@ elif args.week != None:
     enddate = startdate + + timedelta(days=6)
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
     print('-w', args.week, startdate, enddate, startline, lastline)
+elif args.range != None:
+    startdate = get_date_from_line(args.range[0])
+    enddate = get_date_from_line(args.range[1])
+    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    print('-r', args.range, startdate, enddate, startline, lastline)
 else: #-------------- NEEDS FIXED!!!!!!!!----------------------------------------
     # Get current date and starting date
     today = datetime.now().date()
