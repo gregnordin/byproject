@@ -96,37 +96,41 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file",
                     type=str,
                     #type=argparse.FileType('r'),
-                    help = "specify input file")
+                    help = "specify input file name (and path), FILE")
 group = parser.add_mutually_exclusive_group()
-group.add_argument("-d", "--day",
+group.add_argument("-p", "--prev",
                     type = int,
                     default = -1,
-                    help = "number of days prior to today")
-group.add_argument("-a", "--all",
-                    action="store_true",
-                    help = "process all days in file")
+                    help = "number of days previous, PREV=N, to today to include")
+group.add_argument("-d", "--day",
+                    type = str,
+                    help = "particular day, DAY=YYYY-MM-DD")
 group.add_argument("-m", "--month",
                     type = str,
-                    help = "number of days prior to today")
+                    help = "specified month, MONTH=YYYY-MM")
 group.add_argument("-w", "--week",
                     type = str,
-                    help = "week starting from specified day")
+                    help = "week starting from specified day, WEEK=YYYY-MM-DD")
 group.add_argument("-r", "--range",
                     type = str,
                     nargs = 2,
-                    help = "range of dates")
+                    help = "range of dates, RANGE=YYYY-MM-DD")
+group.add_argument("-a", "--all",
+                    action="store_true",
+                    help = "process all days in file")
 args = parser.parse_args()
 print("-f value:", args.file)
+print("-p value:", args.prev)
 print("-d value:", args.day)
-print("-a value:", args.all)
 print("-m value:", args.month)
 print("-w value:", args.week)
 print("-r value:", args.range)
+print("-a value:", args.all)
 
 # Determine which input file to use
 if args.file != None:
     fname = args.file
-elif args.day >= 0 or args.month != None or args.week != None or args.range != None:
+elif args.prev >= 0 or args.month != None or args.week != None or args.range != None or args.day != None or args.all != None:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"done.txt")
 else:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
@@ -136,7 +140,7 @@ print('filename:', fname)
 with open(fname, 'r') as f:
     alllines = [x.strip() for x in f.readlines()]
 
-# Find startline according to date
+# Determine starting and ending lines corresponding to desired date range
 if args.all or os.path.basename(fname) == "todo.txt":
     startline = 0
     lastline = -1
@@ -149,6 +153,11 @@ elif args.week != None:
     enddate = startdate + + timedelta(days=6)
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
     print('-w', args.week, startdate, enddate, startline, lastline)
+elif args.day != None:
+    startdate = get_date_from_line(args.day)
+    enddate = startdate
+    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    print('-d', args.range, startdate, enddate, startline, lastline)
 elif args.range != None:
     startdate = get_date_from_line(args.range[0])
     enddate = get_date_from_line(args.range[1])

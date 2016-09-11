@@ -5,20 +5,20 @@ Here is an alternate way of doing things:
     #----------------------------------------------------
     # Only one of these can be specified at a time
     #----------------------------------------------------
-    # current items in todo.txt
+    # DONE: current items in todo.txt
     ./byproject.py
-    # last N days in done.txt
-    ./byproject.py -d N
-    # all days in done.txt
-    ./byproject.py -a
-    # all days in a specified month in done.txt
-    ./byproject.py -m 2016-08
-    # all days in a week starting at specified date in done.txt
+    # previous N days from today in done.txt
+    ./byproject.py -p N
+    # specific day in done.txt
+    ./byproject.py -d 2016-08-21
+    # DONE: all days in a week starting at specified date in done.txt
     ./byproject.py -w 2016-08-21
-    # all days in a specified date range in done.txt
+    # DONE: all days in a specified month in done.txt
+    ./byproject.py -m 2016-08
+    # DONE: all days in a specified date range in done.txt
     ./byproject.py -r 2016-08-07 2016-08-14
-    # current items in todo.txt
-    ./byproject.py
+    # DONE: all days in done.txt
+    ./byproject.py -a
     #----------------------------------------------------
     # These can be mixed with the above
     #----------------------------------------------------
@@ -28,12 +28,12 @@ Here is an alternate way of doing things:
     ./byproject.py --markdown
     # Include only the following projects
     ./byproject.py -i project1 project2 ...
-    # Not include the following projects
-    ./byproject.py -n project1 project2 ...
+    # Exclude the following projects
+    ./byproject.py -x project1 project2 ...
 
 Other items
 
-- Fix problem when specified date isn't present in file go to next nearest date after specified date.
+- &#9989; Fix problem when specified date isn't present in file go to next nearest date after specified date.
 - I also need to improve the visual formatting of the results (?)
 - Perhaps change t xp 3 to show results by week, month, date range, etc. like above, as well as having the current behavior (?)
 - Make the code a module too so can import it into other python scripts
