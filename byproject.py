@@ -22,7 +22,7 @@ def get_date_from_line(s):
 def get_start_and_end_dates_indices(lines, startdate, enddate):
     """
     Return index of the first occurrence of startdate and index of
-    the last occurrence of enddate in the array of strings, `lines`.
+    the last occurrence of enddate in the list of strings, `lines`.
 
     Arguments:
         lines - array of strings. Somewhere in each string is a date
@@ -30,6 +30,14 @@ def get_start_and_end_dates_indices(lines, startdate, enddate):
                 ASCENDING date order (i.e., oldest date first and newest
                 date last).
         startdate, enddate - datetime object for DATES (not both date and time)
+
+    Notes:
+        If the last occurrence of enddate is the last element of the list, return
+        `index_end_date = None so` that in the routine that calls this function
+        `some_list[index_start_date:index_end_date]` is
+        `some_list[index_start_date:None]` which is the same as
+        `some_list[index_start_date:]`, which is a range that goes to the last
+        element of the list
     """
     if startdate > enddate:
         raise RuntimeError("start date is after end date")
@@ -45,7 +53,7 @@ def get_start_and_end_dates_indices(lines, startdate, enddate):
                 index_end_date = index - 1
                 break
             elif index == len(lines) - 1:
-                index_end_date = -1
+                index_end_date = None
 
     return index_start_date, index_end_date
 
@@ -143,7 +151,7 @@ with open(fname, 'r') as f:
 # Determine starting and ending lines corresponding to desired date range
 if args.all or os.path.basename(fname) == "todo.txt":
     startline = 0
-    lastline = -1
+    lastline = None  # when used in somelist[startline:lastline] it means somelist[startline:]
 elif args.month != None:
     startdate, enddate = get_month_start_end(args.month)
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
@@ -163,17 +171,11 @@ elif args.range != None:
     enddate = get_date_from_line(args.range[1])
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
     print('-r', args.range, startdate, enddate, startline, lastline)
-else: #-------------- NEEDS FIXED!!!!!!!!----------------------------------------
-    # Get current date and starting date
+else: # This implements -p flag
     today = datetime.now().date()
-    startdate = today - timedelta(days=args.day)
-    startdate_string = startdate.strftime("%Y-%m-%d")
-    print('Date range:', startdate, 'to', today)
-    startline = contents.find(startdate_string) - 2
-    lastline = -1
-    #print(startline)
-    #subset = contents[startline-2:]
-    #lines = subset.splitlines()
+    startdate = today - timedelta(days=args.prev)
+    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, today)
+    print('-p', args.prev, startdate, today, startline, lastline)
 
 print("start line and last line:", startline, lastline)
 # Get lines within range of dates

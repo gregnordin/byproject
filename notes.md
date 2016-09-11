@@ -9,7 +9,7 @@ Here is an alternate way of doing things:
     ./byproject.py
     # previous N days from today in done.txt
     ./byproject.py -p N
-    # specific day in done.txt
+    # DONE: specific day in done.txt
     ./byproject.py -d 2016-08-21
     # DONE: all days in a week starting at specified date in done.txt
     ./byproject.py -w 2016-08-21
