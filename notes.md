@@ -1,3 +1,49 @@
+# Sunday, 2016-09-11
+
+I need to implement the -i and -x flags (see below). With these flags there are 3 possibilities:
+
+1. Get all projects. This is currently what is implemented
+2. Include only specified projects
+3. Include all projects except specified projects
+
+Item 1:
+
+    if project not in jobs:
+        jobs[project] = []
+    jobs[project].append(line)
+
+Item 2:
+
+    if project in include_list:
+        if project not in jobs:
+            jobs[project] = []
+        jobs[project].append(line)
+
+Item 3:
+
+    if project not in exclude_list:
+        if project not in jobs:
+            jobs[project] = []
+        jobs[project].append(line)
+
+So I need to make a function, `add_line` that does
+
+    if project not in jobs:
+        jobs[project] = []
+    jobs[project].append(line)
+
+and then I can structure the logic like this:
+
+    if args.include != None:
+        if project in args.include:
+            add_line()
+    elif args.exclude != None:
+        if project not in args.exclude:
+            add_line()
+    else
+        add_line()
+
+
 # Saturday, 2016-09-03
 
 Here is an alternate way of doing things:
@@ -7,7 +53,7 @@ Here is an alternate way of doing things:
     #----------------------------------------------------
     # DONE: current items in todo.txt
     ./byproject.py
-    # previous N days from today in done.txt
+    # DONE: previous N days from today in done.txt
     ./byproject.py -p N
     # DONE: specific day in done.txt
     ./byproject.py -d 2016-08-21

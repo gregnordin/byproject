@@ -104,28 +104,37 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file",
                     type=str,
                     #type=argparse.FileType('r'),
-                    help = "specify input file name (and path), FILE")
-group = parser.add_mutually_exclusive_group()
-group.add_argument("-p", "--prev",
+                    help = "Specify input file name (and path), FILE")
+group_dates = parser.add_mutually_exclusive_group()
+group_dates.add_argument("-p", "--prev",
                     type = int,
                     default = -1,
-                    help = "number of days previous, PREV=N, to today to include")
-group.add_argument("-d", "--day",
+                    help = "Number of days previous, PREV=N, to today to include")
+group_dates.add_argument("-d", "--day",
                     type = str,
-                    help = "particular day, DAY=YYYY-MM-DD")
-group.add_argument("-m", "--month",
+                    help = "Particular day, DAY=YYYY-MM-DD")
+group_dates.add_argument("-m", "--month",
                     type = str,
-                    help = "specified month, MONTH=YYYY-MM")
-group.add_argument("-w", "--week",
+                    help = "Specified month, MONTH=YYYY-MM")
+group_dates.add_argument("-w", "--week",
                     type = str,
-                    help = "week starting from specified day, WEEK=YYYY-MM-DD")
-group.add_argument("-r", "--range",
+                    help = "Week starting from specified day, WEEK=YYYY-MM-DD")
+group_dates.add_argument("-r", "--range",
                     type = str,
                     nargs = 2,
-                    help = "range of dates, RANGE=YYYY-MM-DD")
-group.add_argument("-a", "--all",
+                    help = "Range of dates, RANGE=YYYY-MM-DD")
+group_dates.add_argument("-a", "--all",
                     action="store_true",
-                    help = "process all days in file")
+                    help = "Process all days in file")
+group_proj = parser.add_mutually_exclusive_group()
+group_proj.add_argument("-i", "--include",
+                    type = str,
+                    nargs = "+",
+                    help = "Include specified projects")
+group_proj.add_argument("-x", "--exclude",
+                    type = str,
+                    nargs = "+",
+                    help = "Exclude specified projects")
 args = parser.parse_args()
 print("-f value:", args.file)
 print("-p value:", args.prev)
@@ -134,6 +143,8 @@ print("-m value:", args.month)
 print("-w value:", args.week)
 print("-r value:", args.range)
 print("-a value:", args.all)
+print("-i value:", args.include)
+print("-x value:", args.exclude)
 
 # Determine which input file to use
 if args.file != None:
