@@ -1,6 +1,27 @@
 #!/usr/bin/env python3.5
-# See Rose Perrone's answer at
-# http://stackoverflow.com/questions/2429511/why-do-people-write-usr-bin-env-python-on-the-first-line-of-a-python-script?rq=1
+"""
+Print tasks organized by project for specified date(s).
+
+usage: byproject.py [-h] [-f FILE]
+                    [-p PREV | -d DAY | -m MONTH | -w WEEK | -r RANGE RANGE | -a]
+                    [-i INCLUDE [INCLUDE ...] | -x EXCLUDE [EXCLUDE ...]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  Specify input file name (and path), FILE
+  -p PREV, --prev PREV  Number of days previous, PREV=N, to today to include
+  -d DAY, --day DAY     Particular day, DAY=YYYY-MM-DD
+  -m MONTH, --month MONTH
+                        Specified month, MONTH=YYYY-MM
+  -w WEEK, --week WEEK  Week starting from specified day, WEEK=YYYY-MM-DD
+  -r RANGE RANGE, --range RANGE RANGE
+                        Range of dates, RANGE=YYYY-MM-DD
+  -a, --all             Process all days in file
+  -i INCLUDE [INCLUDE ...], --include INCLUDE [INCLUDE ...]
+                        Include specified projects
+  -x EXCLUDE [EXCLUDE ...], --exclude EXCLUDE [EXCLUDE ...]
+                        Exclude specified projects
+"""
 
 from colorama import init, deinit, Fore, Back, Style
 from datetime import datetime, timedelta, date
@@ -104,8 +125,8 @@ cyan = Fore.CYAN + '{0}' + Style.RESET_ALL
 yellow = Fore.YELLOW + '{0}' + Style.RESET_ALL
 
 # Make shortcuts for formatting output
-indent1 = '  '
-indent2 = '      '
+indent1 = '    '
+indent2 = '        '
 
 print('')
 
@@ -115,6 +136,9 @@ parser.add_argument("-f", "--file",
                     type=str,
                     #type=argparse.FileType('r'),
                     help = "Specify input file name (and path), FILE")
+parser.add_argument("-v", "--verbose",
+                    action="store_true",
+                    help = "Print extra debug information")
 group_dates = parser.add_mutually_exclusive_group()
 group_dates.add_argument("-p", "--prev",
                     type = int,
@@ -146,15 +170,17 @@ group_proj.add_argument("-x", "--exclude",
                     nargs = "+",
                     help = "Exclude specified projects")
 args = parser.parse_args()
-print("-f value:", args.file)
-print("-p value:", args.prev)
-print("-d value:", args.day)
-print("-m value:", args.month)
-print("-w value:", args.week)
-print("-r value:", args.range)
-print("-a value:", args.all)
-print("-i value:", args.include)
-print("-x value:", args.exclude)
+if args.verbose:
+    print("-v value:", args.verbose)
+    print("-f value:", args.file)
+    print("-p value:", args.prev)
+    print("-d value:", args.day)
+    print("-m value:", args.month)
+    print("-w value:", args.week)
+    print("-r value:", args.range)
+    print("-a value:", args.all)
+    print("-i value:", args.include)
+    print("-x value:", args.exclude)
 
 # Determine which input file to use
 if args.file != None:
@@ -163,7 +189,8 @@ elif args.prev >= 0 or args.month != None or args.week != None or args.range != 
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"done.txt")
 else:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
-print('filename:', fname)
+print('')
+print('File:', fname)
 
 # Open file and read contents
 with open(fname, 'r') as f:
@@ -176,29 +203,38 @@ if args.all or os.path.basename(fname) == "todo.txt":
 elif args.month != None:
     startdate, enddate = get_month_start_end(args.month)
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
-    print('-m', args.month, startdate, enddate, startline, lastline)
+    if args.verbose:
+        print('-m', args.month, startdate, enddate, startline, lastline)
 elif args.week != None:
     startdate = get_date_from_line(args.week)
     enddate = startdate + + timedelta(days=6)
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
-    print('-w', args.week, startdate, enddate, startline, lastline)
+    if args.verbose:
+        print('-w', args.week, startdate, enddate, startline, lastline)
 elif args.day != None:
     startdate = get_date_from_line(args.day)
     enddate = startdate
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
-    print('-d', args.range, startdate, enddate, startline, lastline)
+    if args.verbose:
+        print('-d', args.range, startdate, enddate, startline, lastline)
 elif args.range != None:
     startdate = get_date_from_line(args.range[0])
     enddate = get_date_from_line(args.range[1])
     startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
-    print('-r', args.range, startdate, enddate, startline, lastline)
+    if args.verbose:
+        print('-r', args.range, startdate, enddate, startline, lastline)
 else: # This implements -p flag
-    today = datetime.now().date()
-    startdate = today - timedelta(days=args.prev)
-    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, today)
-    print('-p', args.prev, startdate, today, startline, lastline)
+    enddate = datetime.now().date()
+    startdate = enddate - timedelta(days=args.prev)
+    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    if args.verbose:
+        print('-p', args.prev, startdate, enddate, startline, lastline)
 
-print("start line and last line:", startline, lastline)
+print('Date Range:', startdate, 'to', enddate)
+
+if args.verbose:
+    print("start line and last line:", startline, lastline)
+
 # Get lines within range of dates
 lines = alllines[startline:lastline]
 #print(lines)
@@ -227,7 +263,7 @@ for line in lines:
 
 # Sort and print items
 for proj in sorted(jobs):
-    print(indent1, proj)
+    print('\n', indent1, proj, sep='')
     for item in jobs[proj]:
         if ('(A)' in item):
             print(indent2, red.format(item))
@@ -236,5 +272,5 @@ for proj in sorted(jobs):
         elif ('(C)' in item):
             print(indent2, green.format(item))
         else:
-            print(indent2, item)
+            print(indent2, item, sep='')
 print('')
