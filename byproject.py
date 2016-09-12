@@ -186,7 +186,7 @@ if args.verbose:
 # Determine which input file to use
 if args.file != None:
     fname = args.file
-elif args.prev >= 0 or args.month != None or args.week != None or args.range != None or args.day != None or args.all != None:
+elif args.prev >= 0 or args.month != None or args.week != None or args.range != None or args.day != None or args.all:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"done.txt")
 else:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
