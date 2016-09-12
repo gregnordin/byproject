@@ -1,6 +1,8 @@
 # Sunday, 2016-09-11
 
-I need to implement the -i and -x flags (see below under Saturday, 2016-09-03). With these flags there are 3 possibilities:
+## Implement -i and -x options
+
+I need to implement the -i and -x options (see below under Saturday, 2016-09-03). With these options there are 3 possibilities:
 
 1. Get all projects. This is currently what is implemented
 2. Include only specified projects (-i flag)
@@ -43,6 +45,7 @@ and then I can structure the logic like this:
     else
         add_line()
 
+## Status: DONE!
 
 # Saturday, 2016-09-03
 
