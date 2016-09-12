@@ -231,7 +231,10 @@ else: # This implements -p flag
     if args.verbose:
         print('-p', args.prev, startdate, enddate, startline, lastline)
 
-print('Date Range:', startdate, 'to', enddate)
+if args.all or os.path.basename(fname) == "todo.txt":
+    print('Date Range: entire file')
+else:
+    print('Date Range:', startdate, 'to', enddate)
 
 if args.verbose:
     print("start line and last line:", startline, lastline)
