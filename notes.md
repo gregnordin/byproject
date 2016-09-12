@@ -1,10 +1,10 @@
 # Sunday, 2016-09-11
 
-I need to implement the -i and -x flags (see below). With these flags there are 3 possibilities:
+I need to implement the -i and -x flags (see below under Saturday, 2016-09-03). With these flags there are 3 possibilities:
 
 1. Get all projects. This is currently what is implemented
-2. Include only specified projects
-3. Include all projects except specified projects
+2. Include only specified projects (-i flag)
+3. Include all projects except specified projects (-x flag)
 
 Item 1:
 
@@ -68,13 +68,13 @@ Here is an alternate way of doing things:
     #----------------------------------------------------
     # These can be mixed with the above
     #----------------------------------------------------
-    # Specify a different input file
+    # DONE: Specify a different input file
     ./byproject.py -f filename
     # Create output in markdown format
     ./byproject.py --markdown
-    # Include only the following projects
+    # DONE: Include only the following projects
     ./byproject.py -i project1 project2 ...
-    # Exclude the following projects
+    # DONE: Exclude the following projects
     ./byproject.py -x project1 project2 ...
 
 Other items

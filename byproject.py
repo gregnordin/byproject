@@ -85,6 +85,16 @@ def get_month_start_end(s):
     month_last_day = last_day_of_month(month_first_day)
     return month_first_day, month_last_day
 
+def add_line(project, jobs, line):
+    """
+    If `project` is not a key in the dict, `jobs`, create a new list
+    in `jobs` with `project` as the key. Then append `line` to the list
+    associated with the key `project` in `jobs`.
+    """
+    if project not in jobs:
+        jobs[project] = []
+    jobs[project].append(line)
+
 # Define shortcuts for colored text printed to terminal
 red = Fore.RED + '{0}' + Style.RESET_ALL
 blue = Fore.BLUE + '{0}' + Style.RESET_ALL
@@ -193,7 +203,7 @@ print("start line and last line:", startline, lastline)
 lines = alllines[startline:lastline]
 #print(lines)
 
-# Collect items by project
+# Collect items (lines) for each project and put in the dict `jobs`
 jobs = {}
 todo_items = []
 split_line = re.compile('; |, |: |\s')
@@ -203,9 +213,17 @@ for line in lines:
     project = next(
               (word for word in words if word.startswith('+')),
               'no_assigned_project')
-    if project not in jobs:
-        jobs[project] = []
-    jobs[project].append(line)
+    if args.include != None:
+        if project[1:] in args.include:
+            add_line(project, jobs, line)
+    elif args.exclude != None:
+        if project[1:] not in args.exclude:
+            add_line(project, jobs, line)
+    else:
+        add_line(project, jobs, line)
+    # if project not in jobs:
+    #     jobs[project] = []
+    # jobs[project].append(line)
 
 # Sort and print items
 for proj in sorted(jobs):
