@@ -45,7 +45,16 @@ and then I can structure the logic like this:
     else
         add_line()
 
-## Status: DONE!
+### Status: DONE!
+
+## More
+
+- &#9989; Add -v --verbose flag to control what information is printed when byproject.py is run
+- &#9989; Make printed output nicer & compatible with markdown
+    - Example: `bp -p 7 > temp.md` puts output in `temp.md`, which looks nice when rendered
+- &#9989; Make file executable
+- &#9989; Move directory to ~/Documents/Projects/todo
+- &#9989; Add alias to .bash_profile
 
 # Saturday, 2016-09-03
 

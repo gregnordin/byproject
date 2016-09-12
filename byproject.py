@@ -2,13 +2,14 @@
 """
 Print tasks organized by project for specified date(s).
 
-usage: byproject.py [-h] [-f FILE]
+usage: byproject.py [-h] [-f FILE] [-v]
                     [-p PREV | -d DAY | -m MONTH | -w WEEK | -r RANGE RANGE | -a]
                     [-i INCLUDE [INCLUDE ...] | -x EXCLUDE [EXCLUDE ...]]
 
 optional arguments:
   -h, --help            show this help message and exit
   -f FILE, --file FILE  Specify input file name (and path), FILE
+  -v, --verbose         Print extra debug information
   -p PREV, --prev PREV  Number of days previous, PREV=N, to today to include
   -d DAY, --day DAY     Particular day, DAY=YYYY-MM-DD
   -m MONTH, --month MONTH
@@ -190,7 +191,7 @@ elif args.prev >= 0 or args.month != None or args.week != None or args.range != 
 else:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
 print('')
-print('File:', fname)
+print('File:', fname, ' ')
 
 # Open file and read contents
 with open(fname, 'r') as f:
