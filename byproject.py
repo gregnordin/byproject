@@ -22,14 +22,49 @@ optional arguments:
                         Include specified projects
   -x EXCLUDE [EXCLUDE ...], --exclude EXCLUDE [EXCLUDE ...]
                         Exclude specified projects
+
+Examples where we have have made an alias,
+
+    alias bp='~/Documents/Projects/todo/byproject.py'
+
+and byproject.py is executable (chmod +x byproject.py):
+
+    # Show contents of todo.txt by project
+    bp
+    # Show items in todo.txt with project tags "proposals" and "whitepapers"
+    bp -i proposals whitepapers
+    # Show items in todo.txt except for those with project tag "personal" and "home"
+    bp -x personal home
+    # Show items for today in done.txt
+    bp -p 0
+    # Show items for last 3 days in done.txt
+    bp -p 3
+    # Show items for last week in temp.txt
+    bp -p 7 -f temp.txt
+    # Show items for last week in done.txt with project tag "make3dprinter"
+    bp -p 7 -i make3dprinter
+    # Show items for last week in temp.txt with project tag "make3dprinter"
+    bp -p 7 -i make3dprinter -f temp.txt
+    # Show items for last week in done.txt except for those with project tag "groceries"
+    bp -p 7 -x groceries
+    # Show all items in done.txt
+    bp -a
+    # Show items for specified day in done.txt
+    bp -d YYYY-MM-DD
+    # Show items for week starting on specified day in done.txt
+    bp -w YYYY-MM-DD
+    # Show items for month in done.txt
+    bp -m YYYY-MM
+    # Show items in specified date range in done.txt
+    bp -r YYYY-MM-DD YYYY-MM-DD
+    # Show items in specified date range in done.txt with project tag "make3dprinter"
+    bp -r YYYY-MM-DD YYYY-MM-DD -i make3dprinter
 """
 
-from colorama import init, deinit, Fore, Back, Style
+from colorama import Fore, Style
 from datetime import datetime, timedelta, date
 import argparse
 import re
-import collections
-import sys
 import os
 
 def get_date_from_line(s):
