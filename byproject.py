@@ -62,14 +62,17 @@ def get_start_and_end_dates_indices(lines, startdate, enddate):
         element of the list
     """
     if startdate > enddate:
-        raise RuntimeError("start date is after end date")
+        raise RuntimeError("start date must be earlier than end date")
     index_start_date = -999
     for index, line in enumerate(lines):
         temp_date = get_date_from_line(line)
         if index_start_date == -999:
             if temp_date >= startdate:
                 index_start_date = index
-                index_end_date = index
+                if index == len(lines) - 1:
+                    index_end_date = None
+                else:
+                    index_end_date = index
         else:
             if temp_date > enddate:
                 index_end_date = index - 1
