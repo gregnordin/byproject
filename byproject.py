@@ -76,7 +76,7 @@ def get_date_from_line(s):
     date = datetime.strptime(match.group(), '%Y-%m-%d').date()
     return date
 
-def get_start_and_end_dates_indices(lines, startdate, enddate):
+def get_indices_for_start_and_end_dates(lines, startdate, enddate):
     """
     Return index of the first occurrence of startdate and index of
     the last occurrence of enddate in the list of strings, `lines`.
@@ -241,31 +241,31 @@ if args.all or os.path.basename(fname) == "todo.txt":
     lastline = None  # when used in somelist[startline:lastline] it means somelist[startline:]
 elif args.month != None:
     startdate, enddate = get_month_start_end(args.month)
-    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-m', args.month, startdate, enddate, startline, lastline)
 elif args.week != None:
     startdate = get_date_from_line(args.week)
     enddate = startdate + + timedelta(days=6)
-    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-w', args.week, startdate, enddate, startline, lastline)
 elif args.day != None:
     startdate = get_date_from_line(args.day)
     enddate = startdate
-    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-d', args.range, startdate, enddate, startline, lastline)
 elif args.range != None:
     startdate = get_date_from_line(args.range[0])
     enddate = get_date_from_line(args.range[1])
-    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-r', args.range, startdate, enddate, startline, lastline)
 else: # This implements -p flag
     enddate = datetime.now().date()
     startdate = enddate - timedelta(days=args.prev)
-    startline, lastline = get_start_and_end_dates_indices(alllines, startdate, enddate)
+    startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-p', args.prev, startdate, enddate, startline, lastline)
 
