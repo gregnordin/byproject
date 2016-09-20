@@ -99,6 +99,7 @@ def get_indices_for_start_and_end_dates(lines, startdate, enddate):
     if startdate > enddate:
         raise RuntimeError("start date must be earlier than end date")
     index_start_date = -999
+    index_end_date = -999
     for index, line in enumerate(lines):
         temp_date = get_date_from_line(line)
         if index_start_date == -999:
@@ -114,7 +115,12 @@ def get_indices_for_start_and_end_dates(lines, startdate, enddate):
                 break
             elif index == len(lines) - 1:
                 index_end_date = None
-
+    # Need to fix bug: when desired date does not exist in file this function doesn't work
+    print(index_start_date, index_end_date)
+    if index_start_date == -999:
+        raise ValueError("Desired date is later than last date in the file")
+    if index_end_date == -999:
+        raise ValueError("index_end_date has not been set.")
     return index_start_date, index_end_date
 
 def validate_date(date_text):
