@@ -1,3 +1,29 @@
+# Sunday, 2016-11-27
+
+Get ready for release to public github repository
+
+- Handle date not being in file
+- Make sure dates are defined for different flags & options
+- Better formatted output
+- Are docstrings complete & accurate?
+- README.md
+    - Connect to todo.txt
+    - Connect to Plain Text Productivity
+    - Requirements
+        - Python 3.5+
+    - How to use
+        - All options
+        - Example usage (command line and output)
+    - How to set up .bash_profile
+    - How to make .py file executable
+- How organize file(s) for github? Put in separate git-tracked directory? Separate branches? Put dev stuff in untracked dev directory?
+
+# Saturday, 2016-09-24
+
+I need to check out the [fabulous](https://jart.github.io/fabulous/) library:
+
+> Fabulous is a Python library (and command line tools) designed to make the output of terminal applications look fabulous. Fabulous allows you to print colors, images, and stylized text to the console (without curses.) Fabulous also offers features to improve the usability of Python’s standard logging system.
+
 # Saturday, 2016-09-17
 
 `byproject.py` usage examples where we have made an alias:
