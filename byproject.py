@@ -23,7 +23,7 @@ optional arguments:
   -x EXCLUDE [EXCLUDE ...], --exclude EXCLUDE [EXCLUDE ...]
                         Exclude specified projects
 
-Examples where we have have made an alias,
+Examples using the alias,
 
     alias bp='~/Documents/Projects/todo/byproject.py'
 
@@ -79,18 +79,19 @@ def get_date_from_line(s):
 def get_indices_for_start_and_end_dates(lines, startdate, enddate):
     """
     Return index of the first occurrence of startdate and index of
-    the last occurrence of enddate in the list of strings, `lines`.
+    the last occurrence of enddate in the list of strings, `lines`,
+    which is assumed to be in chronological order.
 
     Arguments:
         lines - array of strings. Somewhere in each string is a date
                 with format YYYY-MM-DD. Assume `lines` is sorted in
                 ASCENDING date order (i.e., oldest date first and newest
                 date last).
-        startdate, enddate - datetime object for DATES (not both date and time)
+        startdate, enddate - datetime object for DATES (i.e., not date and time)
 
     Notes:
         If the last occurrence of enddate is the last element of the list, return
-        `index_end_date = None so` that in the routine that calls this function
+        `index_end_date = None` so that in the routine that calls this function
         `some_list[index_start_date:index_end_date]` is
         `some_list[index_start_date:None]` which is the same as
         `some_list[index_start_date:]`, which is a range that goes to the last
@@ -115,25 +116,25 @@ def get_indices_for_start_and_end_dates(lines, startdate, enddate):
                 break
             elif index == len(lines) - 1:
                 index_end_date = None
-    # Need to fix bug: when desired date does not exist in file this function doesn't work
-    print(index_start_date, index_end_date)
     if index_start_date == -999:
-        raise ValueError("Desired date is later than last date in the file")
+        print('Desired date is later than last date in file. Aborting...')
+        exit()
     if index_end_date == -999:
-        raise ValueError("index_end_date has not been set.")
+        raise ValueError("index_end_date has not been set")
+    #print('Start and end indices:', index_start_date, index_end_date)
     return index_start_date, index_end_date
 
 def validate_date(date_text):
     try:
         return datetime.strptime(date_text, '%Y-%m-%d').date()
     except ValueError:
-        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+        raise ValueError("Incorrect date format, should be YYYY-MM-DD")
 
 def validate_month(date_text):
     try:
         return datetime.strptime(date_text, '%Y-%m').date()
     except ValueError:
-        raise ValueError("Incorrect data format, should be YYYY-MM")
+        raise ValueError("Incorrect date format, should be YYYY-MM")
 
 def last_day_of_month(any_day):
     next_month = any_day.replace(day=28) + timedelta(days=4)  # this will never fail
@@ -172,8 +173,6 @@ yellow = Fore.YELLOW + '{0}' + Style.RESET_ALL
 # Make shortcuts for formatting output
 indent1 = '    '
 indent2 = '        '
-
-print('')
 
 # Set up argument parser
 parser = argparse.ArgumentParser()
@@ -235,6 +234,7 @@ elif args.prev >= 0 or args.month != None or args.week != None or args.range != 
 else:
     fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
 print('')
+print('====================================================')
 print('File:', fname, ' ')
 
 # Open file and read contents
@@ -268,12 +268,18 @@ elif args.range != None:
     startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-r', args.range, startdate, enddate, startline, lastline)
-else: # This implements -p flag
+elif args.prev != None:
     enddate = datetime.now().date()
     startdate = enddate - timedelta(days=args.prev)
     startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-p', args.prev, startdate, enddate, startline, lastline)
+else: # if no date flag is set, use today's date
+    enddate = datetime.now().date()
+    startdate = enddate
+    startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
+    if args.verbose:
+        print('no date set', startdate, enddate, startline, lastline)
 
 if args.all or os.path.basename(fname) == "todo.txt":
     print('Date Range: entire file')
@@ -282,6 +288,7 @@ else:
 
 if args.verbose:
     print("start line and last line:", startline, lastline)
+print('====================================================')
 
 # Get lines within range of dates
 lines = alllines[startline:lastline]
@@ -311,7 +318,8 @@ for line in lines:
 
 # Sort and print items
 for proj in sorted(jobs):
-    print('\n', indent1, proj, sep='')
+    #print('\n', indent1, proj, sep='')
+    print(indent1, proj, sep='')
     for item in jobs[proj]:
         if ('(A)' in item):
             print(indent2, red.format(item))
