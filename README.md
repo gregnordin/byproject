@@ -121,7 +121,8 @@ Show items in specified date range in `done.txt` with project tag "make3dprinter
 
 ### Assumptions
 
-I use only one project tag per todo item. `byproject.py` has been designed with this in mind.
+1. I use only one project tag per todo item. `byproject.py` has been designed with this in mind.
+2. The `todo.txt` and `done.txt` files are sorted by date in ascending order.
 
 ### Other useful bash functions
 
