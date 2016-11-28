@@ -122,3 +122,34 @@ Show items in specified date range in `done.txt` with project tag "make3dprinter
 ### Assumptions
 
 I use only one project tag per todo item. `byproject.py` has been designed with this in mind.
+
+### Other useful bash functions
+
+In my `.bash_profile` file I have included the following function definition to go find, count, and list the unique project tags in a text file.
+
+    # Create function to list all projects in descending order with number
+    # of occurrences for any file with the default file being done.txt
+    listproj() {
+    	if [ $# -eq 0 ];
+    	then
+    	   cut -d'+' -f2 /Users/nordin/Dropbox/todo/done.txt | cut -d' ' -f1 | sort | uniq -c | sort -nr
+    	else
+    	   cut -d'+' -f2 $1 | cut -d' ' -f1 | sort | uniq -c | sort -nr
+    	fi
+    }
+
+I also use the following function with `todo.sh` rather than creating an alias so that it gracefully handles all possible flags.
+
+    # Set up todo.sh to use with Dropbox such that all flags work
+    # From http://stackoverflow.com/questions/7131670/make-bash-alias-that-takes-parameter
+    # and http://stackoverflow.com/questions/2172352/in-bash-how-can-i-check-if-a-string-begins-with-some-value
+    t() {
+        # If argument starts with "-" (like "t -h") put it in the middle of command
+        if  [[ $1 == -* ]] ;
+        then
+            /Users/nordin/Dropbox/todo/todo.sh $1 -d /Users/nordin/Dropbox/todo/todo.cfg;
+        # Otherwise, put it at end of command (like "t list")
+        else
+            /Users/nordin/Dropbox/todo/todo.sh -d /Users/nordin/Dropbox/todo/todo.cfg $@;
+        fi
+    }
