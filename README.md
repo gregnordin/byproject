@@ -125,7 +125,7 @@ I use only one project tag per todo item. `byproject.py` has been designed with 
 
 ### Other useful bash functions
 
-In my `.bash_profile` file I have included the following function definition to go find, count, and list the unique project tags in a text file.
+In my `.bash_profile` file I have included the following function definition to find, count, and list the unique project tags in a text file in descending order of occurrence.
 
     # Create function to list all projects in descending order with number
     # of occurrences for any file with the default file being done.txt
