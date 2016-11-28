@@ -2,11 +2,12 @@
 
 Get ready for release to public github repository
 
-- Handle date not being in file
-- Make sure dates are defined for different flags & options
-- Better formatted output
-- Are docstrings complete & accurate?
+- &#9989; Handle date not being in file
+- &#9989; Make sure dates are defined for different flags & options
+- &#9989; Better formatted output
+- &#9989; Are docstrings complete & accurate?
 - README.md
+    - Assume only one project per line; ignore contexts
     - Connect to todo.txt
     - Connect to Plain Text Productivity
     - Requirements
@@ -16,7 +17,7 @@ Get ready for release to public github repository
         - Example usage (command line and output)
     - How to set up .bash_profile
     - How to make .py file executable
-- How organize file(s) for github? Put in separate git-tracked directory? Separate branches? Put dev stuff in untracked dev directory?
+- &#9989; How organize file(s) for github? Put in separate git-tracked directory? Separate branches? Put dev stuff in untracked dev directory?
 
 # Saturday, 2016-09-24
 
