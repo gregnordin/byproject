@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/Users/nordin/anaconda3/bin/python
 """
 Print tasks organized by project for specified date(s).
 
