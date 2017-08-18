@@ -62,10 +62,11 @@ and byproject.py is executable (chmod +x byproject.py):
 """
 
 from colorama import Fore, Style
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 import argparse
 import re
 import os
+
 
 def get_date_from_line(s):
     """
@@ -73,8 +74,9 @@ def get_date_from_line(s):
     as a datetime.date object.
     """
     match = re.search(r'\d{4}-\d{2}-\d{2}', s)
-    date = datetime.strptime(match.group(), '%Y-%m-%d').date()
-    return date
+    first_date = datetime.strptime(match.group(), '%Y-%m-%d').date()
+    return first_date
+
 
 def get_indices_for_start_and_end_dates(lines, startdate, enddate):
     """
@@ -90,10 +92,10 @@ def get_indices_for_start_and_end_dates(lines, startdate, enddate):
         startdate, enddate - datetime object for DATES (i.e., not date and time)
 
     Notes:
-        If the last occurrence of enddate is the last element of the list, return
-        `index_end_date = None` so that in the routine that calls this function
-        `some_list[index_start_date:index_end_date]` is
-        `some_list[index_start_date:None]` which is the same as
+        In routine that calls this function, get all lines for desired range of
+        dates with `some_list[index_start_date:index_end_date + 1]` except if
+        `index_end_date = None`. In this case use
+        `some_list[index_start_date:None]` or the equivalent
         `some_list[index_start_date:]`, which is a range that goes to the last
         element of the list
     """
@@ -121,8 +123,9 @@ def get_indices_for_start_and_end_dates(lines, startdate, enddate):
         exit()
     if index_end_date == -999:
         raise ValueError("index_end_date has not been set")
-    #print('Start and end indices:', index_start_date, index_end_date)
+    print('Start and end indices:', index_start_date, index_end_date)
     return index_start_date, index_end_date
+
 
 def validate_date(date_text):
     try:
@@ -130,15 +133,18 @@ def validate_date(date_text):
     except ValueError:
         raise ValueError("Incorrect date format, should be YYYY-MM-DD")
 
+
 def validate_month(date_text):
     try:
         return datetime.strptime(date_text, '%Y-%m').date()
     except ValueError:
         raise ValueError("Incorrect date format, should be YYYY-MM")
 
+
 def last_day_of_month(any_day):
     next_month = any_day.replace(day=28) + timedelta(days=4)  # this will never fail
     return next_month - timedelta(days=next_month.day)
+
 
 def get_month_start_end(s):
     """
@@ -152,6 +158,7 @@ def get_month_start_end(s):
     month_last_day = last_day_of_month(month_first_day)
     return month_first_day, month_last_day
 
+
 def add_line(project, jobs, line):
     """
     If `project` is not a key in the dict, `jobs`, create a new list
@@ -161,6 +168,7 @@ def add_line(project, jobs, line):
     if project not in jobs:
         jobs[project] = []
     jobs[project].append(line)
+
 
 # Define shortcuts for colored text printed to terminal
 red = Fore.RED + '{0}' + Style.RESET_ALL
@@ -178,41 +186,41 @@ indent2 = '        '
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file",
                     type=str,
-                    #type=argparse.FileType('r'),
-                    help = "Specify input file name (and path), FILE")
+                    # type=argparse.FileType('r'),
+                    help="Specify input file name (and path), FILE")
 parser.add_argument("-v", "--verbose",
                     action="store_true",
-                    help = "Print extra debug information")
+                    help="Print extra debug information")
 group_dates = parser.add_mutually_exclusive_group()
 group_dates.add_argument("-p", "--prev",
-                    type = int,
-                    default = -1,
-                    help = "Number of days previous, PREV=N, to today to include")
+                         type=int,
+                         default=-1,
+                         help="Number of days previous, PREV=N, to today to include")
 group_dates.add_argument("-d", "--day",
-                    type = str,
-                    help = "Particular day, DAY=YYYY-MM-DD")
+                         type=str,
+                         help="Particular day, DAY=YYYY-MM-DD")
 group_dates.add_argument("-m", "--month",
-                    type = str,
-                    help = "Specified month, MONTH=YYYY-MM")
+                         type=str,
+                         help="Specified month, MONTH=YYYY-MM")
 group_dates.add_argument("-w", "--week",
-                    type = str,
-                    help = "Week starting from specified day, WEEK=YYYY-MM-DD")
+                         type=str,
+                         help="Week starting from specified day, WEEK=YYYY-MM-DD")
 group_dates.add_argument("-r", "--range",
-                    type = str,
-                    nargs = 2,
-                    help = "Range of dates, RANGE=YYYY-MM-DD")
+                         type=str,
+                         nargs=2,
+                         help="Range of dates, RANGE=YYYY-MM-DD")
 group_dates.add_argument("-a", "--all",
-                    action="store_true",
-                    help = "Process all days in file")
+                         action="store_true",
+                         help="Process all days in file")
 group_proj = parser.add_mutually_exclusive_group()
 group_proj.add_argument("-i", "--include",
-                    type = str,
-                    nargs = "+",
-                    help = "Include specified projects")
+                        type=str,
+                        nargs="+",
+                        help="Include specified projects")
 group_proj.add_argument("-x", "--exclude",
-                    type = str,
-                    nargs = "+",
-                    help = "Exclude specified projects")
+                        type=str,
+                        nargs="+",
+                        help="Exclude specified projects")
 args = parser.parse_args()
 if args.verbose:
     print("-v value:", args.verbose)
@@ -227,12 +235,13 @@ if args.verbose:
     print("-x value:", args.exclude)
 
 # Determine which input file to use
-if args.file != None:
+if args.file is not None:
     fname = args.file
-elif args.prev >= 0 or args.month != None or args.week != None or args.range != None or args.day != None or args.all:
-    fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"done.txt")
+elif args.prev >= 0 or args.month is not None or args.week is not None or \
+        args.range is not None or args.day is not None or args.all:
+    fname = os.path.join(os.path.sep, 'Users', 'nordin', 'Dropbox', 'todo', "done.txt")
 else:
-    fname = os.path.join(os.path.sep, 'Users','nordin','Dropbox','todo',"todo.txt")
+    fname = os.path.join(os.path.sep, 'Users', 'nordin', 'Dropbox', 'todo', "todo.txt")
 print('')
 print('====================================================')
 print('File:', fname, ' ')
@@ -245,36 +254,36 @@ with open(fname, 'r') as f:
 if args.all or os.path.basename(fname) == "todo.txt":
     startline = 0
     lastline = None  # when used in somelist[startline:lastline] it means somelist[startline:]
-elif args.month != None:
+elif args.month is not None:
     startdate, enddate = get_month_start_end(args.month)
     startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-m', args.month, startdate, enddate, startline, lastline)
-elif args.week != None:
+elif args.week is not None:
     startdate = get_date_from_line(args.week)
     enddate = startdate + + timedelta(days=6)
     startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-w', args.week, startdate, enddate, startline, lastline)
-elif args.day != None:
+elif args.day is not None:
     startdate = get_date_from_line(args.day)
     enddate = startdate
     startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-d', args.range, startdate, enddate, startline, lastline)
-elif args.range != None:
+elif args.range is not None:
     startdate = get_date_from_line(args.range[0])
     enddate = get_date_from_line(args.range[1])
     startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-r', args.range, startdate, enddate, startline, lastline)
-elif args.prev != None:
+elif args.prev is not None:
     enddate = datetime.now().date()
     startdate = enddate - timedelta(days=args.prev)
     startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-p', args.prev, startdate, enddate, startline, lastline)
-else: # if no date flag is set, use today's date
+else:  # if no date flag is set, use today's date
     enddate = datetime.now().date()
     startdate = enddate
     startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
@@ -291,8 +300,11 @@ if args.verbose:
 print('====================================================')
 
 # Get lines within range of dates
-lines = alllines[startline:lastline]
-#print(lines)
+if lastline is None:
+    lines = alllines[startline:]
+else:
+    lines = alllines[startline:lastline + 1]
+# print(lines)
 
 # Collect items (lines) for each project and put in the dict `jobs`
 jobs = {}
@@ -302,12 +314,12 @@ for line in lines:
     words = split_line.split(line)
     # Get first instance of a word that starts with '+'
     project = next(
-              (word for word in words if word.startswith('+')),
-              'no_assigned_project')
-    if args.include != None:
+        (word for word in words if word.startswith('+')),
+        'no_assigned_project')
+    if args.include is not None:
         if project[1:] in args.include:
             add_line(project, jobs, line)
-    elif args.exclude != None:
+    elif args.exclude is not None:
         if project[1:] not in args.exclude:
             add_line(project, jobs, line)
     else:
@@ -318,7 +330,7 @@ for line in lines:
 
 # Sort and print items
 for proj in sorted(jobs):
-    #print('\n', indent1, proj, sep='')
+    # print('\n', indent1, proj, sep='')
     print(indent1, proj, sep='')
     for item in jobs[proj]:
         if ('(A)' in item):
