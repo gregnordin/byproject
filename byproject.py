@@ -261,7 +261,7 @@ elif args.month is not None:
         print('-m', args.month, startdate, enddate, startline, lastline)
 elif args.week is not None:
     startdate = get_date_from_line(args.week)
-    enddate = startdate + + timedelta(days=6)
+    enddate = startdate + timedelta(days=6)
     startline, lastline = get_indices_for_start_and_end_dates(alllines, startdate, enddate)
     if args.verbose:
         print('-w', args.week, startdate, enddate, startline, lastline)
